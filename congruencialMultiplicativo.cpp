@@ -5,14 +5,14 @@
 #include <math.h>
 using namespace std;
 
-long getRandom(long X0, long a, long c, long m)
+long getRandom(long X0, long a, long m)
 {
-	return ((a * X0) + c) % m;
+	return (a * X0) % m;
 }
 
 int main(int argc, char * argv[])
 {
-	long X0, a, c, m;
+	long X0, a, m;
 	std::vector<long> history;
 	std::cout << "Ingresa X0: ";
 	while(!(std::cin >> X0)){
@@ -26,12 +26,6 @@ int main(int argc, char * argv[])
         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
         std::cout << "Entrada inválida, intenta otra vez: ";
     }
-    std::cout << "Ingresa c: ";
-	while(!(std::cin >> c)){
-        std::cin.clear();
-        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-        std::cout << "Entrada inválida, intenta otra vez: ";
-    }
     std::cout << "Ingresa m: ";
 	while(!(std::cin >> m)){
         std::cin.clear();
@@ -40,24 +34,24 @@ int main(int argc, char * argv[])
     }
     int cycle = 1;
     int tail = 1;
-    long Xn = getRandom(X0, a, c, m);    
+    long Xn = getRandom(X0, a, m);    
     history.push_back(Xn);    
 
     bool done = false;    
     std::cout << "Op" << "	" << "Entero" << "	" << "Xn" << "	" << "Random" << std::endl;
-    std::cout << (float)(a * X0+c)/(float)m << "	" << floor((float)(a * X0+c)/(float)m) << "	" << Xn << "	" << (float)Xn / (float)m << std::endl;
+    std::cout << (float)(a * X0)/(float)m << "	" << floor((float)(a * X0)/(float)m) << "	" << Xn << "	" << (float)Xn / (float)m << std::endl;
     while(!done)
     {    	    	
-    	Xn = getRandom(history.back(), a, c, m);  	
+    	Xn = getRandom(history.back(), a, m);  	
     	if(find(history.begin(), history.end(), Xn) != history.end())
     	{
     		std::vector<long> cycleHistory;
     		cycleHistory.push_back(Xn);    		
-    		long needle = getRandom(cycleHistory.back(), a, c, m);
+    		long needle = getRandom(cycleHistory.back(), a, m);
     		cycleHistory.push_back(needle);
     		while(needle != Xn)
     		{
-    			needle = getRandom(cycleHistory.back(), a, c, m);
+    			needle = getRandom(cycleHistory.back(), a, m);
     			cycle++;
     			cycleHistory.push_back(needle);
     		}
@@ -66,7 +60,7 @@ int main(int argc, char * argv[])
     	else
     	{
     		tail++;
-    		std::cout << (float)(a * history.back()+c)/(float)m << "	" << floor((float)(a * history.back()+c)/(float)m) << "	" << Xn << "	" << (float)Xn / (float)m << std::endl;
+    		std::cout << (float)(a * history.back())/(float)m << "	" << floor((float)(a * history.back())/(float)m) << "	" << Xn << "	" << (float)Xn / (float)m << std::endl;
     		history.push_back(Xn);
     	}
     }
