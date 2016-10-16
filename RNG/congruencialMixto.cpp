@@ -90,8 +90,8 @@ void mixedCongruential(long X0, long a, long c, long m)
     bool done = false;    
 
 
-    std::cout << "Op" << "\t" << "Entero" << "\t" << "Xn" << "\t" << "Random" << std::endl;
-    std::cout << (float)(a * X0+c)/(float)m << "\t" << floor((float)(a * X0+c)/(float)m) << "\t" << Xn << "\t" << (float)Xn / (float)m << std::endl;
+    std::cout << "Op" << "\t\t" << "Entero" << "\t\t" << "Xn" << "\t\t" << "Random" << std::endl;
+    std::cout << (float)(a * X0+c)/(float)m << "\t\t" << floor((float)(a * X0+c)/(float)m) << "\t\t" << Xn << "\t\t" << (float)Xn / (float)m << std::endl;
     while(!done)
     {               
         Xn = getRandom(history.back(), a, c, m);    
@@ -112,7 +112,7 @@ void mixedCongruential(long X0, long a, long c, long m)
         else
         {
             tail++;
-            std::cout << (float)(a * history.back()+c)/(float)m << "\t" << floor((float)(a * history.back()+c)/(float)m) << "\t" << Xn << "\t" << (float)Xn / (float)m << std::endl;
+            std::cout << (float)(a * history.back()+c)/(float)m << "\t\t" << floor((float)(a * history.back()+c)/(float)m) << "\t\t" << Xn << "\t\t" << (float)Xn / (float)m << std::endl;
             history.push_back(Xn);
         }
     }
@@ -123,6 +123,7 @@ void mixedCongruential(long X0, long a, long c, long m)
 
 int main(int argc, char * argv[])
 {
+    std::cout.precision(5);
     if(argc > 1)
     {
         std::ifstream file;
