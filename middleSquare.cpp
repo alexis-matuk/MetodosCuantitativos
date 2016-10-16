@@ -9,8 +9,14 @@ int main(int argc, char * argv[])
     bool repeating = false;
     bool keep = true;
     vector<long> numbers;
-    long dq = atoi(argv[1]);
-    int length = strlen(argv[1]);
+    long dq;
+    std::cout << "Ingresa la semilla: ";
+    while(!(std::cin >> dq)){
+        std::cin.clear();
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        std::cout << "Entrada inválida, intenta otra vez: ";
+    }
+    int length = to_string(dq).length();
     numbers.push_back(dq);
     std::string number;
     int first;
