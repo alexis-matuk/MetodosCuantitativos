@@ -1,0 +1,1 @@
+g++ middleSquare.cpp -o midSquare -std=c++11
