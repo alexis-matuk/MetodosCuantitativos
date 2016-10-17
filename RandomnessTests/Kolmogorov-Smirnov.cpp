@@ -85,8 +85,6 @@ int main(int argc, char * argv[])
     std::sort(data.begin(), data.end());
     std::vector<double> dPlus, dMinus; 
     int length = data.size();   
-    for(auto i : data)
-        std::cout << i << std::endl;
     fillDplus(dPlus, data, length);
     fillDMinus(dMinus, data, length);    
     double maxDPlus, maxDMinus;
