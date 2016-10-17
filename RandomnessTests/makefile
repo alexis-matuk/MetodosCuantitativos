@@ -1,0 +1,1 @@
+g++ Kolmogorov-Smirnov.cpp -o Smirnov -std=c++11
