@@ -51,7 +51,7 @@ std::vector<double> readData(std::ifstream & _file)
         {
             double x;
             std::istringstream i(line);
-            i >> setprecision(2) >> x;
+            i >> x;
             data.push_back(x);
         }
     }
@@ -75,7 +75,7 @@ void printData(std::vector<Pair> ranges, std::vector<int> frequencies)
 
 bool areSame(double a, double b)
 {
-    return fabs(a - b) < 0.001;
+    return fabs(a - b) < 0.0001;
 }
 
 int findRange(std::vector<Pair> ranges, double number)
@@ -90,6 +90,74 @@ int findRange(std::vector<Pair> ranges, double number)
     return 0;
 }
 
+bool incompleteClasses(std::vector<int> frequencies, int & pos)
+{
+    for(int i = 0; i < frequencies.size(); i++)
+    {
+        pos = i;
+        if (frequencies[i] < 5) return true;
+    }
+    pos = 0;    
+    return false;
+}
+
+void mergeClasses(std::vector<Pair> & ranges, std::vector<int> & frequencies)
+{
+    int pos;
+    while(incompleteClasses(frequencies, pos))
+    {
+        if(pos == 0)
+        {
+            Pair newPair;
+            newPair.min = ranges[pos].min;
+            newPair.max = ranges[pos + 1].max;
+            int newFreq = frequencies[pos] + frequencies[pos + 1];
+            ranges[pos] = newPair;
+            frequencies[pos] = newFreq;
+            ranges.erase(ranges.begin() + pos + 1);
+            frequencies.erase(frequencies.begin() + pos + 1);
+        }
+        else if(pos == frequencies.size())
+        {
+            Pair newPair;
+            newPair.min = ranges[pos - 1].min;
+            newPair.max = ranges[pos].max;
+            int newFreq = frequencies[pos] + frequencies[pos - 1];
+            ranges[pos] = newPair;
+            frequencies[pos] = newFreq;
+            ranges.erase(ranges.begin() + pos - 1);
+            frequencies.erase(frequencies.begin() + pos - 1);
+        }
+        else
+        {            
+            if(frequencies[pos - 1] < frequencies[pos + 1])
+            {
+                //Con el de arriba
+                Pair newPair;
+                newPair.min = ranges[pos - 1].min;
+                newPair.max = ranges[pos].max;
+                int newFreq = frequencies[pos] + frequencies[pos - 1];
+                ranges[pos] = newPair;
+                frequencies[pos] = newFreq;
+                ranges.erase(ranges.begin() + pos - 1);
+                frequencies.erase(frequencies.begin() + pos - 1);
+            }
+            else
+            {
+                //Con el de abajo
+                Pair newPair;
+                newPair.min = ranges[pos].min;
+                newPair.max = ranges[pos + 1].max;
+                int newFreq = frequencies[pos] + frequencies[pos + 1];
+                ranges[pos] = newPair;
+                frequencies[pos] = newFreq;
+                ranges.erase(ranges.begin() + pos + 1);
+                frequencies.erase(frequencies.begin() + pos + 1);
+            }
+        }
+    }
+}
+
 int main(int argc, char * argv[])
 {
 	std::cout.precision(4);
@@ -102,8 +170,17 @@ int main(int argc, char * argv[])
     double max = *std::max_element(data.begin(), data.end());
     double min = *std::min_element(data.begin(), data.end());
     double interval = (double)(max - min) / (double)numberOfClasses;
-    double maxVal = min;
-    double sum = interval - maxVal;
+    double maxVal = min;    
+
+    std::ostringstream strs;
+    strs << interval;
+    std::string str = strs.str();
+    int dotPos = str.find('.');
+    int fracPart = stoi(str.substr(dotPos+1, str.length()));
+    str.replace(dotPos+1, str.length(), std::to_string(fracPart-1));
+    double sum = stod(str);
+
+
     double lastMaxLimit;
     std::vector<Pair> ranges;
     while(maxVal < max)
@@ -138,6 +215,8 @@ int main(int argc, char * argv[])
             maxVal += interval;
         }
     }
+    std::cout << "interval: " << interval << std::endl;
+    std::cout << "# classes: " << numberOfClasses << std::endl;
     
     std::vector<int> frequencies(ranges.size(),0);
     
@@ -145,6 +224,7 @@ int main(int argc, char * argv[])
     {
         frequencies[findRange(ranges, data[i])] += 1;
     }
+    mergeClasses(ranges, frequencies);
     printData(ranges, frequencies);
     return 0;
 }

@@ -137,11 +137,11 @@ int main(int argc, char * argv[])
         long dq;
         std::cout << "Ingresa la semilla: ";
         while(!(std::cin >> dq)){
-        std::cin.clear();
-        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-        std::cout << "Entrada inválida, intenta otra vez: ";
-    }
-    middleSquare(dq);
+            std::cin.clear();
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            std::cout << "Entrada inválida, intenta otra vez: ";
+        }
+        middleSquare(dq);
     }    
     return 0;
 }
