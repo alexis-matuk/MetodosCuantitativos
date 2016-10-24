@@ -60,14 +60,14 @@ std::vector<double> readData(std::ifstream & _file)
     return data;
 }
 
-void printData(std::vector<Pair> ranges, std::vector<int> frequencies)
+void printData(std::vector<Pair> ranges, std::vector<int> frequencies, double length)
 {
-	std::cout << "Classes" << "\t\t" << "Oi" << "\t" << "Ei" << "\t\t" << "Oi - Ei" << "\t\t" << "(Oi - Ei)^2" << "\t" << "(Oi - Ei)^2/Ei" <<std::endl;
-	double expected = (double)(1/(double)ranges.size())*100;
-	double total = 0;
+    std::cout << "Classes" << "\t\t" << "Oi" << "\t" << "Ei" << "\t\t" << "Oi - Ei" << "\t\t" << "(Oi - Ei)^2" << "\t" << "(Oi - Ei)^2/Ei" <<std::endl;
+    double expected = (double)(length/(double)ranges.size());
+    double total = 0;
     for(int i = 0; i < ranges.size(); i++)
     {
-    	total += (double)((frequencies[i] - expected)*(frequencies[i] - expected))/expected;
+        total += (double)((frequencies[i] - expected)*(frequencies[i] - expected))/expected;
         std::cout << ranges[i].min << " - " << ranges[i].max << "\t" << frequencies[i] << "\t" << expected << "\t\t" << frequencies[i] - expected << "\t\t" << (frequencies[i] - expected)*(frequencies[i] - expected) << "\t\t" << (double)((frequencies[i] - expected)*(frequencies[i] - expected))/expected << std::endl;
     }
     std::cout << "Total: " << total << std::endl;
@@ -97,7 +97,7 @@ bool incompleteClasses(std::vector<int> frequencies, int & pos)
         pos = i;
         if (frequencies[i] < 5) return true;
     }
-    pos = 0;    
+    pos = 0;
     return false;
 }
 
@@ -117,7 +117,7 @@ void mergeClasses(std::vector<Pair> & ranges, std::vector<int> & frequencies)
             ranges.erase(ranges.begin() + pos + 1);
             frequencies.erase(frequencies.begin() + pos + 1);
         }
-        else if(pos == frequencies.size())
+        else if(pos == frequencies.size() - 1)
         {
             Pair newPair;
             newPair.min = ranges[pos - 1].min;
@@ -129,7 +129,7 @@ void mergeClasses(std::vector<Pair> & ranges, std::vector<int> & frequencies)
             frequencies.erase(frequencies.begin() + pos - 1);
         }
         else
-        {            
+        {
             if(frequencies[pos - 1] < frequencies[pos + 1])
             {
                 //Con el de arriba
@@ -160,7 +160,7 @@ void mergeClasses(std::vector<Pair> & ranges, std::vector<int> & frequencies)
 
 int main(int argc, char * argv[])
 {
-	std::cout.precision(4);
+    std::cout.precision(4);
     std::ifstream file;
     std::string path = argv[1];
     openFile(file, path);
@@ -170,8 +170,8 @@ int main(int argc, char * argv[])
     double max = *std::max_element(data.begin(), data.end());
     double min = *std::min_element(data.begin(), data.end());
     double interval = (double)(max - min) / (double)numberOfClasses;
-    double maxVal = min;    
-
+    double maxVal = min;
+    
     std::ostringstream strs;
     strs << interval;
     std::string str = strs.str();
@@ -179,8 +179,7 @@ int main(int argc, char * argv[])
     int fracPart = stoi(str.substr(dotPos+1, str.length()));
     str.replace(dotPos+1, str.length(), std::to_string(fracPart-1));
     double sum = stod(str);
-
-
+    
     double lastMaxLimit;
     std::vector<Pair> ranges;
     while(maxVal < max)
@@ -225,6 +224,6 @@ int main(int argc, char * argv[])
         frequencies[findRange(ranges, data[i])] += 1;
     }
     mergeClasses(ranges, frequencies);
-    printData(ranges, frequencies);
+    printData(ranges, frequencies, length);
     return 0;
 }

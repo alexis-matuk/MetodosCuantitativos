@@ -114,6 +114,7 @@ void multCongruential(long X0, long a, long m)
             history.push_back(Xn);
         }
     }
+    tail = tail - cycle;    
     std::cout << "Cola: " << tail << std::endl;
     std::cout << "Ciclo: " << cycle << std::endl;
     std::cout << "Periodo: " << tail + cycle << std::endl;

@@ -1,1 +1,1 @@
-g++ Anderson-Darling.cpp -o Anderson -std=c++11
+g++ Autocorrelation.cpp -o Auto -std=c++11
