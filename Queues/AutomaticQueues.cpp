@@ -3,6 +3,7 @@
 #include <string>
 #include <algorithm>
 #include <fstream>
+#include <sstream>
 #include <math.h>
 using namespace std;
 
@@ -187,16 +188,26 @@ Result performSimulation(double lambda, double miu, double m, double Cs, double 
     return res;
 }
 
-Result OptimizeLinear(double lambda, double miu, double Cs, double Cw, std::function<bool(Result,Result)> comparison)
+bool AllComparisons(Result newSim, Result minSerial, std::vector<std::function<bool(Result,Result)>> comparisonFunctions)
+{	
+	for(int i = 0; i < comparisonFunctions.size(); i++)
+	{
+		if(!comparisonFunctions[i](newSim, minSerial))
+			return false;
+	}
+	return true;
+}
+
+Result OptimizeLinear(double lambda, double miu, double Cs, double Cw, std::vector<std::function<bool(Result,Result)>> comparisonFunctions)
 {
     struct Result minSerial = performSimulation(lambda, miu, 1, Cs, Cw);
     int i = 2;
     struct Result newSim = performSimulation(lambda, miu * i, 1, Cs, Cw);
-    while(comparison(newSim, minSerial))
+    while(AllComparisons(newSim, minSerial, comparisonFunctions))
     {
         minSerial = newSim;
         i++;
-        newSim = performSimulation(lambda, miu * i, 1, Cs, Cw);
+        newSim = performSimulation(lambda, miu * i, 1, Cs, Cw);        
     }
     std::cout << minSerial << std::endl;
     std::cout << "miu: " << miu * i << std::endl;
@@ -204,15 +215,15 @@ Result OptimizeLinear(double lambda, double miu, double Cs, double Cw, std::func
     return minSerial;
 }
 
-Result OptimizeParallel(double lambda, double miu, double Cs, double Cw, std::function<bool(Result,Result)> comparison)
+Result OptimizeParallel(double lambda, double miu, double Cs, double Cw, std::vector<std::function<bool(Result,Result)>> comparisonFunctions)
 {
     int i = 0;
     struct Result minSerial = performSimulation(lambda, miu, ++i, Cs, Cw);    
     struct Result newSim = performSimulation(lambda, miu, ++i, Cs, Cw);
-    while(comparison(newSim, minSerial))
+    while(AllComparisons(newSim, minSerial, comparisonFunctions))
     {
         minSerial = newSim;
-        newSim = performSimulation(lambda, miu, ++i, Cs, Cw);
+        newSim = performSimulation(lambda, miu, ++i, Cs, Cw);        
     }
     std::cout << minSerial << std::endl;
     std::cout << "miu: " << miu  << std::endl;
@@ -311,16 +322,19 @@ int main(int argc, char * argv[])
     std::cout << "9) Total Queue Cost" << std::endl;
     std::cout << "10) Total System Cost" << std::endl;
 
-   
-   
-    while(!(std::cin >> choice) || choice > 10){
-        std::cin.clear();
-        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-        std::cout << "Entrada inválida, intenta otra vez: ";
-    }
-    
+    std::vector<std::function<bool(Result,Result)>> comparisonFunctions;
+	std::cin.ignore();
+	std::string line;
+	std::getline(std::cin, line);
+	std::istringstream input(line);
+	std::vector<int> result;
+	int value;
+	while (input >> value)
+	{
+	    comparisonFunctions.push_back(GetComparer(value));
+	}
     std::cout << "Optimized Linear Result" << std::endl;
-    OptimizeLinear(lambda, miu, Cs, Cw, GetComparer(choice)); 
+    OptimizeLinear(lambda, miu, Cs, Cw, comparisonFunctions); 
     std::cout << "Optimized Parallel Result" << std::endl;
-    OptimizeParallel(lambda, miu, Cs, Cw, GetComparer(choice)); 
+    OptimizeParallel(lambda, miu, Cs, Cw, comparisonFunctions); 
 }
