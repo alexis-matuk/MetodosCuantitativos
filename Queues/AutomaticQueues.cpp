@@ -234,39 +234,19 @@ Result OptimizeParallel(double lambda, double miu, double Cs, double Cw, std::ve
 std::function<bool(Result, Result)> GetComparer(int choice)
 {
     std::function<bool(Result,Result)> res;
-    switch(choice){
-        case 1:{
-            res = [](Result a, Result b){return a.P0 < b.P0;};
-        break;}
-        case 2:{
-            res = [](Result a, Result b){return a.L < b.L;};            
-        break;}
-        case 3:{
-            res = [](Result a, Result b){return a.W < b.W;};            
-        break;}
-        case 4:{
-            res = [](Result a, Result b){return a.Lq < b.Lq;}; 
-        break;}
-        case 5:{
-            res = [](Result a, Result b){return a.Wq < b.Wq;}; 
-        break;}
-        case 6:{
-            res = [](Result a, Result b){return a.Rho < b.Rho;}; 
-        break;}
-        case 7:{
-            res = [](Result a, Result b){return a.waitingCostSys < b.waitingCostSys;}; 
-        break;}
-        case 8:{
-            res = [](Result a, Result b){return a.waitingCostQueue < b.waitingCostQueue;}; 
-        break;}
-        case 9:{
-            res = [](Result a, Result b){return a.totalQueueCost < b.totalQueueCost;}; 
-        break;}
-        case 10:{
-            res = [](Result a, Result b){return a.totalSysCost < b.totalSysCost;};       
-        break;}
-    }
-    return res;
+    std::vector<std::function<bool(Result,Result)>> funcs = {
+    	[](Result a, Result b){return a.P0 < b.P0;},
+    	[](Result a, Result b){return a.L < b.L;},
+    	[](Result a, Result b){return a.W < b.W;},
+    	[](Result a, Result b){return a.Lq < b.Lq;},
+    	[](Result a, Result b){return a.Wq < b.Wq;},
+    	[](Result a, Result b){return a.Rho < b.Rho;},
+    	[](Result a, Result b){return a.waitingCostSys < b.waitingCostSys;},
+    	[](Result a, Result b){return a.waitingCostQueue < b.waitingCostQueue;},
+    	[](Result a, Result b){return a.totalQueueCost < b.totalQueueCost;},
+    	[](Result a, Result b){return a.totalSysCost < b.totalSysCost;}
+	};
+    return funcs[choice];
 }
 
 int main(int argc, char * argv[])
