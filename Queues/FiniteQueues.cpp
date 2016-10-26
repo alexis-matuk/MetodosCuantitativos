@@ -59,28 +59,34 @@ double factorial(double number)
     return res;
 }
 
-double getLq(double lambda, double miu)
+double getP0(double lambda, double miu, int N)
 {
-    double upper = pow(lambda,2);
-    double lower = (2 * miu)*(miu - lambda);
-    return upper/lower;
+    double sum = 0;
+    for(int i = 0; i <= N; i++)
+    {
+        sum += (double)(factorial(N)/factorial(N-i))*pow((double)(lambda/miu),i);
+    }
+    return (double)(1 / sum);
 }
 
-double getL(double lambda, double miu, double Lq)
+double getLq(double lambda, double miu, double N, double P0)
 {
-    return Lq + (lambda/miu);
+    return N - ((double)(lambda + miu)/lambda)*(1-P0);
 }
 
-double getWq(double lambda, double miu)
+double getL(double Lq, double P0)
 {
-    double upper = lambda;
-    double lower = (2*miu)*(miu - lambda);  
-    return upper/lower;  
+    return Lq + (1 - P0);
 }
 
-double getW(double lambda, double miu, double Wq)
+double getWq(double lambda, double Lq, double N, double L)
 {
-    return Wq + (1/miu);
+    return (double)Lq / ((N - L)*lambda);
+}
+
+double getW(double Wq, double miu)
+{
+    return Wq + (double)(1/miu);
 }
 
 double getTotalServiceCost(double m, double Cs)
@@ -110,7 +116,8 @@ double getTotalQueueCost(double serviceCost, double waitingCostQueue)
 
 int main(int argc, char * argv[])
 { 
-    std::cout << "Este programa maneja colas M|D|1" << std::endl;
+    /*TODO*/
+    std::cout << "Este programa maneja colas M|M|1 con usuarios finitos" << std::endl;
     int choice;
     std::cout << "1) Sin costos" << std::endl;
     std::cout << "2) Con costos" << std::endl;
@@ -121,7 +128,7 @@ int main(int argc, char * argv[])
         std::cout << "Entrada inválida, intenta otra vez: ";
     }
 
-    double lambda, miu, m, Cs, Cw;
+    double lambda, miu, N, Cs, Cw;
     std::cout << "Ingresa lambda: ";
     while(!(std::cin >> lambda)){
         std::cin.clear();
@@ -134,27 +141,29 @@ int main(int argc, char * argv[])
         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
         std::cout << "Entrada inválida, intenta otra vez: ";
     }
-    std::cout << "Ingresa m: ";
-    while(!(std::cin >> m)){
+    std::cout << "Ingresa N: ";
+    while(!(std::cin >> N)){
         std::cin.clear();
         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
         std::cout << "Entrada inválida, intenta otra vez: ";
     }
     
-    double Lq = getLq(lambda, miu);    
-    double Wq = getWq(lambda, miu);    
-    double L = getL(lambda, miu, Lq);
-    double W = getW(lambda, miu, Wq);
-    
+    double P0 = getP0(lambda, miu, N);
+    double Lq = getLq(lambda, miu, N, P0);
+    double L = getL(Lq, P0);
+    double Wq = getWq(lambda, Lq, N, L);
+    double W = getW(Wq, miu);            
+    std::cout << "P0: " << P0 << std::endl;
+    std::cout << "m*miu > lambda" << std::endl;
+    std::cout << "Probability that the system is empty" << std::endl;   
     std::cout << "Lq: " << Lq << std::endl;      
-    std::cout << "Average length of queue" << std::endl; 
+    std::cout << "Average length of the queue" << std::endl; 
     std::cout << "L: " << L << std::endl; 
-    std::cout << "Average number of customers or units in the system" << std::endl; 
+    std::cout << "Average number of units in the system" << std::endl;  
     std::cout << "Wq: " << Wq << std::endl;      
-    std::cout << "Average waiting time in queue" << std::endl;     
+    std::cout << "Average time in the queue" << std::endl; 
     std::cout << "W: " << W << std::endl;      
-    std::cout << "Average waiting time in the system" << std::endl; 
-    
+    std::cout << "Average time in the system" << std::endl;         
 
     if(choice != 1)
     {
@@ -171,7 +180,7 @@ int main(int argc, char * argv[])
             std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
             std::cout << "Entrada inválida, intenta otra vez: ";
         }
-        double serviceCost = getTotalServiceCost(m, Cs);
+        double serviceCost = getTotalServiceCost(1, Cs);
         double waitingCostSys = getWaitingCostSys(lambda, W, Cw);
         double waitingCostQueue = getWaitingCostQueue(lambda, Wq, Cw);
         std::cout << "Service Cost: " << serviceCost << std::endl;

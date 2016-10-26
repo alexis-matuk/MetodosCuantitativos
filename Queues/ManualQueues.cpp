@@ -126,12 +126,7 @@ double getTotalQueueCost(double serviceCost, double waitingCostQueue)
 
 int main(int argc, char * argv[])
 { 
-    //lambda
-    //miu
-
-    //simular multiples trabajadores con un servidor
-    //Simular multiples servidores
-
+    std::cout << "Este programa maneja colas M|M|1, M|M|m" << std::endl;
     int choice;
     std::cout << "1) Sin costos" << std::endl;
     std::cout << "2) Con costos" << std::endl;
