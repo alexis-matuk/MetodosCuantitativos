@@ -54,14 +54,14 @@ void middleSquare(long dq)
     bool keep = true;
     vector<long> numbers;
     int length = to_string(dq).length();
-    numbers.push_back(dq);
+    // numbers.push_back(dq);
     std::string number;
     int first;
     int periodo = 0;
     int longitudc = 0;
     int ciclo = 1;
     int cont = 0;
-    std::cout << dq << std::endl;    
+       
     while(keep)
     {
         dq *= dq;

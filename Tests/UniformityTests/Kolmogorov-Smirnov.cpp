@@ -94,5 +94,10 @@ int main(int argc, char * argv[])
     std::cout << "Max D-: " << maxDMinus << std::endl;
     std::cout << "Max{D+, D-}: " << std::max(maxDMinus, maxDPlus) << std::endl;
     std::cout << "Check table for D < Da to see if it follows a uniform distribution" << std::endl;
+    if(std::max(maxDMinus, maxDPlus) < atof(argv[2]))
+        std::cout << "Es uniforme" << std::endl;
+    else
+        std::cout << "No es uniforme" << std::endl;
+
     return 0;
 }

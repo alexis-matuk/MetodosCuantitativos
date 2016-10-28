@@ -124,6 +124,11 @@ double getTotalQueueCost(double serviceCost, double waitingCostQueue)
     return serviceCost + waitingCostQueue;
 }
 
+double getPk(double lambda, double miu, double k)
+{
+    return pow((lambda/miu),k+1);
+}
+
 int main(int argc, char * argv[])
 { 
     std::cout << "Este programa maneja colas M|M|1, M|M|m" << std::endl;
@@ -137,7 +142,7 @@ int main(int argc, char * argv[])
         std::cout << "Entrada inválida, intenta otra vez: ";
     }
 
-    double lambda, miu, m, Cs, Cw;
+    double lambda, miu, m, Cs, Cw, k;
     std::cout << "Ingresa lambda: ";
     while(!(std::cin >> lambda)){
         std::cin.clear();
@@ -156,6 +161,18 @@ int main(int argc, char * argv[])
         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
         std::cout << "Entrada inválida, intenta otra vez: ";
     }
+    std::cout << "Ingresa k: ";
+    while(!(std::cin >> k)){
+        std::cin.clear();
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        std::cout << "Entrada inválida, intenta otra vez: ";
+    }
+    std::cout << "Ingresa # de personas por servidor: ";
+    while(!(std::cin >> persons)){
+        std::cin.clear();
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        std::cout << "Entrada inválida, intenta otra vez: ";
+    }
     
     double P0 = getP0(lambda, miu, m);
     double L = getL(lambda, miu, m, P0);
@@ -163,6 +180,7 @@ int main(int argc, char * argv[])
     double Lq = getLq(L, lambda, miu);
     double Wq = getWq(Lq, lambda);
     double Rho = getRho(lambda, miu, m);
+    double Pk = getPk(lambda, miu, k);
     std::cout << "P0: " << P0 << std::endl;
     std::cout << "m*miu > lambda" << std::endl;
     std::cout << "Probability that there are no people or units in the system" << std::endl;   
@@ -175,7 +193,9 @@ int main(int argc, char * argv[])
     std::cout << "Wq: " << Wq << std::endl;      
     std::cout << "Average time a person or unit spends in the queue waiting for service" << std::endl;
     std::cout << "Rho: " << Rho << std::endl;      
-    std::cout << "Utilization rate" << std::endl;     
+    std::cout << "Utilization rate" << std::endl;
+    std::cout << "Pn>k: " << Pk << std::endl;
+    std::cout << "Probability of more than k units in the system" << std::endl;     
 
     if(choice != 1)
     {
@@ -191,7 +211,7 @@ int main(int argc, char * argv[])
             std::cin.clear();
             std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
             std::cout << "Entrada inválida, intenta otra vez: ";
-        }
+        }        
         double serviceCost = getTotalServiceCost(m, Cs);
         double waitingCostSys = getWaitingCostSys(lambda, W, Cw);
         double waitingCostQueue = getWaitingCostQueue(lambda, Wq, Cw);
