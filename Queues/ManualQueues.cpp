@@ -167,12 +167,6 @@ int main(int argc, char * argv[])
         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
         std::cout << "Entrada inválida, intenta otra vez: ";
     }
-    std::cout << "Ingresa # de personas por servidor: ";
-    while(!(std::cin >> persons)){
-        std::cin.clear();
-        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-        std::cout << "Entrada inválida, intenta otra vez: ";
-    }
     
     double P0 = getP0(lambda, miu, m);
     double L = getL(lambda, miu, m, P0);
